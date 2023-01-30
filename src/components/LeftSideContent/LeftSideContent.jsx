@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./LeftSideContent.css";
 
-export default function LeftSideContent() {
+export default function LeftSideContent({ setNewsId }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -26,13 +26,22 @@ export default function LeftSideContent() {
     return date.toLocaleDateString("en-US", options);
   }
 
+  const titleOnClick = (newsId) => {
+    setNewsId(newsId);
+    // console.log(newsId, "news Id");
+  };
+
   return (
     <div>
       <h1>News Titles</h1>
 
       {data?.hits?.map((elm, i) => {
         return (
-          <div key={i} className="title-container">
+          <div
+            key={i}
+            className="title-container"
+            onClick={() => titleOnClick(elm.objectID)}
+          >
             <span className="created-date">
               Created at: {formatDate(elm.created_at)}
             </span>

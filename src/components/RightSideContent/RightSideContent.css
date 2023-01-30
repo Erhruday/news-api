@@ -1,0 +1,11 @@
+.desc-container {
+  background-color: rgb(141, 141, 255);
+  padding: 20px 10px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  color: rgb(19, 6, 83);
+}
+.desc-container:hover {
+  background-color: rgb(133, 133, 190);
+  animation-duration: 0.5s;
+}
