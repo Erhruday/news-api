@@ -1,0 +1,20 @@
+.title-container {
+  background-color: rgb(234, 234, 255);
+  padding: 20px 10px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  color: rgb(19, 6, 83);
+}
+.title-container:hover {
+  background-color: rgb(224, 224, 254);
+  animation-duration: 0.5s;
+}
+.created-date,
+.author {
+  color: grey;
+  margin-bottom: 5px;
+  display: block;
+}
+.title {
+  font-size: 22px;
+}

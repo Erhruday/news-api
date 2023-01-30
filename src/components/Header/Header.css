@@ -1,0 +1,9 @@
+.header-wrapper {
+  background-color: blueviolet;
+}
+.header-container {
+  padding: 20px 0;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+}
