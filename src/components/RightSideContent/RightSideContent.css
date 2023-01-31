@@ -1,11 +1,17 @@
+.wrapper {
+  height: 150vh;
+  overflow: auto;
+}
 .desc-container {
   background-color: rgb(141, 141, 255);
   padding: 20px 10px;
   margin-bottom: 15px;
   cursor: pointer;
   color: rgb(19, 6, 83);
+  font-size: 20px;
+  border-radius: 5px;
 }
 .desc-container:hover {
-  background-color: rgb(133, 133, 190);
+  background-color: rgb(159, 159, 184);
   animation-duration: 0.5s;
 }

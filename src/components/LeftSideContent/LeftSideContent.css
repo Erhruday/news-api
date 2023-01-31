@@ -4,6 +4,7 @@
   margin-bottom: 15px;
   cursor: pointer;
   color: rgb(19, 6, 83);
+  border-radius: 5px;
 }
 .title-container:hover {
   background-color: rgb(224, 224, 254);
