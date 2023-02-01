@@ -1,4 +1,4 @@
-import { Pagination, TextField } from "@mui/material";
+import { Button, Pagination, TextField } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import "./LeftSideContent.css";
 
@@ -7,20 +7,40 @@ export default function LeftSideContent({
   setCurrentUrl,
   setPage,
 }) {
+  const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [value, delay]);
+
+    return debouncedValue;
+  };
+
   const [data, setData] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResult, setSearchResult] = useState(data?.hits);
+  // const [searchResult, setSearchResult] = useState(data?.hits);
 
   const [pageNumber, setPageNumber] = useState(1);
 
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
   useEffect(() => {
-    fetch("https://hn.algolia.com/api/v1/search?tags=story&query=foo")
+    fetch(
+      `https://hn.algolia.com/api/v1/search?tags=story&query=${debouncedSearchQuery}&page=${pageNumber}`
+    )
       .then((response) => response.json())
       .then((data) => setData(data))
 
       .catch((error) => console.error(error));
-  }, []);
+  }, [pageNumber, debouncedSearchQuery]);
   console.log(data, "DATA");
 
   function formatDate(dateStr) {
@@ -41,16 +61,22 @@ export default function LeftSideContent({
     // console.log(newsId, "news Id");
   };
 
-  useEffect(() => {
-    const filteredResults = data?.hits?.filter((item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setSearchResult(filteredResults);
-  }, [searchQuery, data?.hits]);
+  // useEffect(() => {
+  //   const filteredResults = data?.hits?.filter((item) =>
+  //     item.title.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+  //   setSearchResult(filteredResults);
+  // }, [searchQuery, data?.hits]);
 
   const paginationOnChange = (event, newPage) => {
     setPageNumber(newPage);
     console.log(newPage);
+  };
+
+  const saveToDBBtnOnClick = () => {
+    data?.hits?.map((elm, i) => {
+      return console.log(elm.title, elm.author, elm.created_at);
+    });
   };
 
   return (
@@ -67,37 +93,55 @@ export default function LeftSideContent({
         style={{ marginBottom: "20px" }}
       />
 
-      {searchResult?.map((elm, i) => {
+      {data?.hits?.map((elm, i) => {
         return (
-          <div
+          <a
+            target={"_blank"}
+            rel="noreferrer"
+            href={elm.url}
             key={i}
-            className="title-container"
+            style={{ textDecoration: "none" }}
             onClick={(e) => {
               e.stopPropagation();
               setPage("contents");
-              setCurrentUrl(elm.url);
+              // setCurrentUrl(elm.url);
             }}
           >
-            <span className="created-date">
-              Created at: {formatDate(elm.created_at)}
-            </span>
-            <div className="title">{elm.title}</div>
-            <p className="author">
-              Author: {elm.author} |{" "}
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setPage("comments");
-                  titleOnClick(elm);
-                }}
-              >
-                {" "}
-                <b> {elm.num_comments}</b> comments
+            <div className="title-container">
+              <span className="created-date">
+                Created at: {formatDate(elm.created_at)}
               </span>
-            </p>
-          </div>
+              <div className="title">{elm.title}</div>
+              <p className="author">
+                Author: {elm.author} |{" "}
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPage("comments");
+                    titleOnClick(elm);
+                    if (e.stopPropagation) {
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }
+                    e.cancelBubble = true;
+                    e.returnValue = false;
+                    return false;
+                  }}
+                  className="comments"
+                >
+                  {" "}
+                  <b> {elm.num_comments}</b> comments
+                </span>
+              </p>
+            </div>
+          </a>
         );
       })}
+
+      <Button variant="contained" color="success" onClick={saveToDBBtnOnClick}>
+        Save to DB
+      </Button>
+
       <div style={{ margin: "50px 0" }}>
         <Pagination
           variant="outlined"
@@ -110,3 +154,7 @@ export default function LeftSideContent({
     </div>
   );
 }
+
+// DATABASE_HOST=aws.connect.psdb.cloud
+// DATABASE_USERNAME=93lztfp46u8mafn9aa04
+// DATABASE_PASSWORD=pscale_pw_jpB3WIoDoOMSPLekZKRqyOhp5i9RLgtuK2yUg6QC7oL
